@@ -155,3 +155,69 @@ Authenticate a user and return a JWT token.
 
 
 -`token` (string) : JWT Token
+
+## Get User Profile
+`GET /users/profile`
+
+Retrieve the authenticated user's profile information.
+
+### Headers
+| Field         | Value              | Description                    |
+|---------------|-------------------|--------------------------------|
+| Authorization | Bearer {token}    | JWT authentication token       |
+
+### Response Status Codes
+| Status | Description                                           |
+|--------|-------------------------------------------------------|
+| 200    | Success - Returns user profile                        |
+| 401    | Unauthorized - Invalid or missing token               |
+| 500    | Internal Server Error                                 |
+
+### Sample Success Response (200)
+```json
+{
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john@example.com"
+}
+```
+
+### Sample Error Response (401)
+```json
+{
+  "message": "Unauthorized"
+}
+```
+
+## Logout User
+`GET /users/logout`
+
+Log out the current user and invalidate their token.
+
+### Headers
+| Field         | Value              | Description                    |
+|---------------|-------------------|--------------------------------|
+| Authorization | Bearer {token}    | JWT authentication token       |
+
+### Response Status Codes
+| Status | Description                                           |
+|--------|-------------------------------------------------------|
+| 200    | Success - User logged out successfully                |
+| 401    | Unauthorized - Invalid or missing token               |
+| 500    | Internal Server Error                                 |
+
+### Sample Success Response (200)
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+### Sample Error Response (401)
+```json
+{
+  "message": "Unauthorized"
+}
+```
