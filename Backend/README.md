@@ -221,3 +221,100 @@ Log out the current user and invalidate their token.
   "message": "Unauthorized"
 }
 ```
+
+# Captain API Documentation
+
+## Register Captain
+`POST /captains/register`
+
+Register a new captain in the system.
+
+### Request Body
+```json
+{
+  "fullname": {
+    "firstname": "string",
+    "lastname": "string"
+  },
+  "email": "string",
+  "password": "string",
+  "vehicle": {
+    "color": "string",
+    "plate": "string",
+    "capacity": "number",
+    "vehicleType": "string"
+  }
+}
+```
+
+### Required Fields
+| Field                | Type   | Description                                      |
+|---------------------|--------|--------------------------------------------------|
+| fullname.firstname  | string | Captain's first name (min 3 chars)              |
+| fullname.lastname   | string | Captain's last name (min 3 chars)               |
+| email              | string | Captain's email address                         |
+| password           | string | Captain's password (min 6 chars)                |
+| vehicle.color      | string | Vehicle color (min 3 chars)                     |
+| vehicle.plate      | string | Vehicle plate number (min 3 chars)              |
+| vehicle.capacity   | number | Vehicle passenger capacity (min 1)              |
+| vehicle.vehicleType| string | Type of vehicle (car/motorcycle/auto)           |
+
+### Response Status Codes
+| Status | Description                                           |
+|--------|-------------------------------------------------------|
+| 201    | Captain successfully registered                        |
+| 400    | Bad Request - Missing or invalid fields               |
+| 409    | Conflict - Captain with email already exists          |
+| 500    | Internal Server Error                                 |
+
+### Sample Request
+```json
+{
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.driver@example.com",
+  "password": "password123",
+  "vehicle": {
+    "color": "Black",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+### Sample Success Response (201)
+```json
+{
+  "success": true,
+  "message": "Captain registered successfully",
+  "captain": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.driver@example.com",
+    "vehicle": {
+      "color": "Black",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": "inactive"
+  }
+}
+```
+
+### Sample Error Response (400)
+```json
+{
+  "success": false,
+  "message": "Invalid input data",
+  "errors": [
+    "Firstname must be at least 3 characters long",
+    "Vehicle type must be car, motorcycle, or auto"
+  ]
+}
+```
