@@ -233,16 +233,16 @@ Register a new captain in the system.
 ```json
 {
   "fullname": {
-    "firstname": "string",
-    "lastname": "string"
+    "firstname": "John", // required, minimum 3 characters
+    "lastname": "Doe"    // optional, minimum 3 characters if provided
   },
-  "email": "string",
-  "password": "string",
+  "email": "john@example.com",    // required, must be valid email format
+  "password": "password123",      // required, minimum 6 characters
   "vehicle": {
-    "color": "string",
-    "plate": "string",
-    "capacity": "number",
-    "vehicleType": "string"
+    "color": "Black",            // required, minimum 3 characters
+    "plate": "ABC123",           // required, minimum 3 characters
+    "capacity": 4,               // required, minimum value 1
+    "vehicleType": "car"         // required, must be "car", "motorcycle", or "auto"
   }
 }
 ```
@@ -316,5 +316,107 @@ Register a new captain in the system.
     "Firstname must be at least 3 characters long",
     "Vehicle type must be car, motorcycle, or auto"
   ]
+}
+```
+
+### Success Response (201)
+```json
+{
+  "token": "jwt_token_here",     // JWT token for authentication
+  "captain": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john@example.com",
+    "vehicle": {
+      "color": "Black",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": "inactive"         // default status for new captains
+  }
+}
+```
+
+## Login Captain
+`POST /captains/login`
+
+Authenticate a captain and return a JWT token.
+
+### Request Body
+```json
+{
+  "email": "john@example.com",    // required, must be valid email
+  "password": "password123"       // required, minimum 6 characters
+}
+```
+
+### Success Response (200)
+```json
+{
+  "token": "jwt_token_here",      // JWT token for authentication
+  "captain": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john@example.com",
+    "vehicle": {
+      "color": "Black",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": "inactive"
+  }
+}
+```
+
+## Get Captain Profile
+`GET /captains/profile`
+
+Retrieve the authenticated captain's profile information.
+
+### Headers
+| Field         | Value              | Description                    |
+|---------------|-------------------|--------------------------------|
+| Authorization | Bearer {token}    | JWT authentication token       |
+
+### Success Response (200)
+```json
+{
+  "captain": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john@example.com",
+    "vehicle": {
+      "color": "Black",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": "inactive"
+  }
+}
+```
+
+## Logout Captain
+`GET /captains/logout`
+
+Log out the current captain and invalidate their token.
+
+### Headers
+| Field         | Value              | Description                    |
+|---------------|-------------------|--------------------------------|
+| Authorization | Bearer {token}    | JWT authentication token       |
+
+### Success Response (200)
+```json
+{
+  "message": "Logged out successfully"
 }
 ```
