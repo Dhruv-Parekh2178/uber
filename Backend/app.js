@@ -8,7 +8,7 @@ const connectToDb = require('./db/db');
 const userRoutes = require('./routes/user.routes');
 const captainRoutes = require('./routes/captain.routes');
 
-console.log("About to connect to DB");
+// console.log("About to connect to DB");
 connectToDb();
 
 app.use(cors());

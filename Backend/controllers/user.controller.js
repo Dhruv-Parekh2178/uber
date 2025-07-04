@@ -41,7 +41,7 @@ module.exports.loginUser = async (req, res , next ) => {
         return res.status(400).json({errors : errors.array()});
     }
 
-    const {email, password } = req.body
+    const {email, password } = req.body;
 
     const user = await userModel.findOne({email}).select('+password');
 
