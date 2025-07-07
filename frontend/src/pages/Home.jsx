@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import axios from 'axios';
@@ -197,11 +197,10 @@ const Home = () => {
 
     }
 
-  return (
-      <div className='h-screen relative overflow-hidden'>
+    return (
+        <div className='h-screen relative overflow-hidden'>
             <img className='w-16 absolute left-5 top-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
             <div className='h-screen w-screen'>
-                {/* image for temporary use  */}
                 <LiveTracking />
             </div>
             <div className=' flex flex-col justify-end h-screen absolute top-0 w-full'>
@@ -287,7 +286,7 @@ const Home = () => {
                     waitingForDriver={waitingForDriver} />
             </div>
         </div>
-  );
-};
+    )
+}
 
-export default Home;
+export default Home
