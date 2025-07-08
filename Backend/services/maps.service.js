@@ -52,26 +52,27 @@ module.exports.getDistanceTime = async (origin, destination) => {
     }
 }
 
-module.exports.getAutoCompleteSuggestions = async (input) => {
-    if (!input) {
-        throw new Error('query is required');
-    }
-
-    const apiKey = process.env.GOOGLE_MAPS_API;
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${apiKey}`;
-
+module.exports.getAutoCompleteSuggestions = async (req, res, next) => {
     try {
-        const response = await axios.get(url);
-        if (response.data.status === 'OK') {
-            return response.data.predictions.map(prediction => prediction.description).filter(value => value);
-        } else {
-            throw new Error('Unable to fetch suggestions');
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
+
+        const { input } = req.query;
+
+        if (!input || input.trim().length < 2) {
+            return res.status(400).json({ message: 'Input must be at least 2 characters' });
+        }
+
+        const suggestions = await mapService.getAutoCompleteSuggestions(input);
+
+        res.status(200).json(suggestions);
     } catch (err) {
-        console.error(err);
-        throw err;
+        console.error('AutoComplete Error:', err.message);
+        res.status(500).json({ message: 'Failed to fetch location suggestions' });
     }
-}
+};
 
 module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
 

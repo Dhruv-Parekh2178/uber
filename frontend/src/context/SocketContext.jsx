@@ -4,7 +4,12 @@ import { io } from 'socket.io-client';
 
 export const SocketContext = createContext();
 
-const socket = io(`${import.meta.env.VITE_BASE_URL}`);
+// const socket = io(`${import.meta.env.VITE_BASE_URL}`);
+
+const socketURL = import.meta.env.VITE_BASE_URL || 'http://localhost:4000';
+console.log("Socket connecting to:", socketURL);
+
+const socket = io(socketURL);
 
 const SocketProvider = ({ children }) => {
     useEffect(() => {
