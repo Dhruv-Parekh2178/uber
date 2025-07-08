@@ -1,107 +1,64 @@
-# User Registration API Documentation
+# Backend API Documentation
 
-## Register User
-`POST /users/register`
+## /users/register Endpoint
+**Description:**
+Registers a new user by creating a user account with the provided information.
 
-Register a new user in the system.
+**HTTP Method:**
+POST
 
-### Request Body
+**Request Body:**
+The request body should be in JSON format and include the following fields:
+
+- `fullname` (object):
+  - `firstname` (string, required): User's first name (minimum 3 characters).
+  - `lastname` (string, optional): User's last name (minimum 3 characters).
+- `email` (string, required): User's email address (must be a valid email).
+- `password` (string, required): User's password (minimum 6 characters).
+
+**Example Request:**
 ```json
 {
-  "name": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string"
-}
-```
-
-### Required Fields
-| Field    | Type   | Description                    |
-|----------|--------|--------------------------------|
-| name     | string | User's full name              |
-| email    | string | User's email address          |
-| password | string | User's password (min 6 chars)  |
-| phone    | string | User's phone number           |
-
-### Response Status Codes
-| Status | Description                                           |
-|--------|-------------------------------------------------------|
-| 201    | User successfully registered                           |
-| 400    | Bad Request - Missing or invalid fields               |
-| 409    | Conflict - User with email already exists             |
-| 500    | Internal Server Error                                 |
-
-### Sample Request
-```json
-{
-  "name": "John Doe",
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
   "email": "john@example.com",
-  "password": "password123",
-  "phone": "1234567890"
+  "password": "password123"
 }
 ```
 
-### Sample Success Response (201)
+**Example Response:**
 ```json
 {
-  "success": true,
-  "message": "User registered successfully",
-  "userId": "user_id_here"
+  "user": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john@example.com",
+    "password": "password123"
+  },
+  "token": "jwt_token_here"
 }
 ```
 
-### Sample Error Response (400)
-```json
-{
-  "success": false,
-  "message": "Invalid input data",
-  "errors": [
-    "Email is required",
-    "Password must be at least 6 characters"
-  ]
-}
-```
+---
 
-###Example Response
+## /users/login Endpoint
+**Description:**
+Authenticates a user using their email and password, returning a JWT token upon successful login.
 
--`USer` (object):
-  -`fullname` (object).
-     -`firstname` (string , required) : User's first name (minimum 3 characters).
-     -`lastname` (string , optional) : User's last name (minimum 3 characters).
-  -`email` (string , required) : User's email address (must be a valid email).
-  -`password` (string , required) : User's password (minimum 6 characters).```
+**HTTP Method:**
+POST
 
+**Request Body:**
+The request body should be in JSON format and include the following fields:
 
--`token` (string) : JWT Token
+- `email` (string, required): User's email address (must be a valid email).
+- `password` (string, required): User's password (minimum 6 characters).
 
-## Login User
-`POST /users/login`
-
-Authenticate a user and return a JWT token.
-
-### Request Body
-```json
-{
-  "email": "string",
-  "password": "string"
-}
-```
-
-### Required Fields
-| Field    | Type   | Description                    |
-|----------|--------|--------------------------------|
-| email    | string | User's email address           |
-| password | string | User's password (min 6 chars)  |
-
-### Response Status Codes
-| Status | Description                                           |
-|--------|-------------------------------------------------------|
-| 200    | User successfully authenticated                       |
-| 400    | Bad Request - Missing or invalid fields               |
-| 401    | Unauthorized - Invalid email or password              |
-| 500    | Internal Server Error                                 |
-
-### Sample Request
+**Example Request:**
 ```json
 {
   "email": "john@example.com",
@@ -109,12 +66,36 @@ Authenticate a user and return a JWT token.
 }
 ```
 
-### Sample Success Response (200)
+**Example Response:**
 ```json
 {
-  "success": true,
-  "message": "User authenticated successfully",
-  "token": "jwt_token_here",
+  "user": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john@example.com",
+    "password": "password123"
+  },
+  "token": "jwt_token_here"
+}
+```
+
+---
+
+## /users/profile Endpoint
+**Description:**
+Retrieves the profile information of the currently authenticated user.
+
+**HTTP Method:**
+GET
+
+**Authentication:**
+Requires a valid JWT token in the Authorization header: `Authorization: Bearer <token>`
+
+**Example Response:**
+```json
+{
   "user": {
     "fullname": {
       "firstname": "John",
@@ -125,149 +106,57 @@ Authenticate a user and return a JWT token.
 }
 ```
 
-### Sample Error Response (400)
+---
+
+## /users/logout Endpoint
+**Description:**
+Logout the current user and blacklist the token provided in cookie or headers.
+
+**HTTP Method:**
+GET
+
+**Authentication:**
+Requires a valid JWT token in the Authorization header or cookie.
+
+**Example Response:**
 ```json
 {
-  "success": false,
-  "message": "Invalid input data",
-  "errors": [
-    "Email is required",
-    "Password must be at least 6 characters"
-  ]
-}
-```
-
-### Sample Error Response (401)
-```json
-{
-  "success": false,
-  "message": "Invalid email or password"
-}
-```
-###Example Response
-
--`USer` (object):
-  -`fullname` (object).
-     -`firstname` (string , required) : User's first name (minimum 3 characters).
-     -`lastname` (string , optional) : User's last name (minimum 3 characters).
-  -`email` (string , required) : User's email address (must be a valid email).
-  -`password` (string , required) : User's password (minimum 6 characters).```
-
-
--`token` (string) : JWT Token
-
-## Get User Profile
-`GET /users/profile`
-
-Retrieve the authenticated user's profile information.
-
-### Headers
-| Field         | Value              | Description                    |
-|---------------|-------------------|--------------------------------|
-| Authorization | Bearer {token}    | JWT authentication token       |
-
-### Response Status Codes
-| Status | Description                                           |
-|--------|-------------------------------------------------------|
-| 200    | Success - Returns user profile                        |
-| 401    | Unauthorized - Invalid or missing token               |
-| 500    | Internal Server Error                                 |
-
-### Sample Success Response (200)
-```json
-{
-  "fullname": {
-    "firstname": "John",
-    "lastname": "Doe"
+  "user": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john@example.com",
+    "password": "password123"
   },
-  "email": "john@example.com"
+  "token": "jwt_token_here"
 }
 ```
 
-### Sample Error Response (401)
-```json
-{
-  "message": "Unauthorized"
-}
-```
+---
 
-## Logout User
-`GET /users/logout`
+## /captains/register Endpoint
+**Description:**
+Registers a new captain by creating a captain account with the provided information.
 
-Log out the current user and invalidate their token.
+**HTTP Method:**
+POST
 
-### Headers
-| Field         | Value              | Description                    |
-|---------------|-------------------|--------------------------------|
-| Authorization | Bearer {token}    | JWT authentication token       |
+**Request Body:**
+The request body should be in JSON format and include the following fields:
 
-### Response Status Codes
-| Status | Description                                           |
-|--------|-------------------------------------------------------|
-| 200    | Success - User logged out successfully                |
-| 401    | Unauthorized - Invalid or missing token               |
-| 500    | Internal Server Error                                 |
+- `fullname` (object):
+  - `firstname` (string, required): Captain's first name (minimum 3 characters).
+  - `lastname` (string, optional): Captain's last name (minimum 3 characters).
+- `email` (string, required): Captain's email address (must be a valid email).
+- `password` (string, required): Captain's password (minimum 6 characters).
+- `vehicle` (object):
+  - `color` (string, required): Vehicle color (minimum 3 characters).
+  - `plate` (string, required): Vehicle plate number (minimum 3 characters).
+  - `capacity` (number, required): Vehicle passenger capacity (minimum 1).
+  - `vehicleType` (string, required): Type of vehicle (must be 'car', 'motorcycle', or 'auto').
 
-### Sample Success Response (200)
-```json
-{
-  "message": "Logged out successfully"
-}
-```
-
-### Sample Error Response (401)
-```json
-{
-  "message": "Unauthorized"
-}
-```
-
-# Captain API Documentation
-
-## Register Captain
-`POST /captains/register`
-
-Register a new captain in the system.
-
-### Request Body
-```json
-{
-  "fullname": {
-    "firstname": "John", // required, minimum 3 characters
-    "lastname": "Doe"    // optional, minimum 3 characters if provided
-  },
-  "email": "john@example.com",    // required, must be valid email format
-  "password": "password123",      // required, minimum 6 characters
-  "vehicle": {
-    "color": "Black",            // required, minimum 3 characters
-    "plate": "ABC123",           // required, minimum 3 characters
-    "capacity": 4,               // required, minimum value 1
-    "vehicleType": "car"         // required, must be "car", "motorcycle", or "auto"
-  }
-}
-```
-
-### Required Fields
-| Field                | Type   | Description                                      |
-|---------------------|--------|--------------------------------------------------|
-| fullname.firstname  | string | Captain's first name (min 3 chars)              |
-| fullname.lastname   | string | Captain's last name (min 3 chars)               |
-| email              | string | Captain's email address                         |
-| password           | string | Captain's password (min 6 chars)                |
-| vehicle.color      | string | Vehicle color (min 3 chars)                     |
-| vehicle.plate      | string | Vehicle plate number (min 3 chars)              |
-| vehicle.capacity   | number | Vehicle passenger capacity (min 1)              |
-| vehicle.vehicleType| string | Type of vehicle (car/motorcycle/auto)           |
-
-### Response Status Codes
-| Status | Description                                           |
-|--------|-------------------------------------------------------|
-| 201    | Captain successfully registered                        |
-| 400    | Bad Request - Missing or invalid fields               |
-| 409    | Conflict - Captain with email already exists          |
-| 500    | Internal Server Error                                 |
-
-### Sample Request
+**Example Request:**
 ```json
 {
   "fullname": {
@@ -285,11 +174,86 @@ Register a new captain in the system.
 }
 ```
 
-### Sample Success Response (201)
+**Example Response:**
 ```json
 {
-  "success": true,
-  "message": "Captain registered successfully",
+  "captain": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.driver@example.com",
+    "password": "password123",
+    "vehicle": {
+      "color": "Black",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  },
+  "token": "jwt_token_here"
+}
+```
+
+---
+
+## /captains/login Endpoint
+**Description:**
+Authenticates a captain using their email and password, returning a JWT token upon successful login.
+
+**HTTP Method:**
+POST
+
+**Request Body:**
+The request body should be in JSON format and include the following fields:
+
+- `email` (string, required): Captain's email address (must be a valid email).
+- `password` (string, required): Captain's password (minimum 6 characters).
+
+**Example Request:**
+```json
+{
+  "email": "john.driver@example.com",
+  "password": "password123"
+}
+```
+
+**Example Response:**
+```json
+{
+  "captain": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.driver@example.com",
+    "password": "password123",
+    "vehicle": {
+      "color": "Black",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  },
+  "token": "jwt_token_here"
+}
+```
+
+---
+
+## /captains/profile Endpoint
+**Description:**
+Retrieves the profile information of the currently authenticated captain.
+
+**HTTP Method:**
+GET
+
+**Authentication:**
+Requires a valid JWT token in the Authorization header: `Authorization: Bearer <token>`
+
+**Example Response:**
+```json
+{
   "captain": {
     "fullname": {
       "firstname": "John",
@@ -301,122 +265,210 @@ Register a new captain in the system.
       "plate": "ABC123",
       "capacity": 4,
       "vehicleType": "car"
-    },
-    "status": "inactive"
+    }
   }
 }
 ```
 
-### Sample Error Response (400)
+---
+
+## /captains/logout Endpoint
+**Description:**
+Logout the current captain and blacklist the token provided in cookie or headers.
+
+**HTTP Method:**
+GET
+
+**Authentication:**
+Requires a valid JWT token in the Authorization header or cookie.
+
+**Example Response:**
 ```json
 {
-  "success": false,
-  "message": "Invalid input data",
-  "errors": [
-    "Firstname must be at least 3 characters long",
-    "Vehicle type must be car, motorcycle, or auto"
-  ]
+  "message": "Logout successfully."
 }
 ```
 
-### Success Response (201)
+---
+
+## /maps/get-coordinates Endpoint
+**Description:**
+Retrieves the coordinates (latitude and longitude) for a given address.
+
+**HTTP Method:**
+GET
+
+**Request Parameters:**
+- `address` (string, required): The address for which to retrieve coordinates.
+
+**Example Request:**
+GET /maps/get-coordinates?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA
+
+**Example Response:**
 ```json
 {
-  "token": "jwt_token_here",     // JWT token for authentication
-  "captain": {
-    "fullname": {
-      "firstname": "John",
-      "lastname": "Doe"
-    },
-    "email": "john@example.com",
-    "vehicle": {
-      "color": "Black",
-      "plate": "ABC123",
-      "capacity": 4,
-      "vehicleType": "car"
-    },
-    "status": "inactive"         // default status for new captains
+  "ltd": 37.4224764,
+  "lng": -122.0842499
+}
+```
+
+**Error Response:**
+- 400 Bad Request: If the address parameter is missing or invalid.
+- 404 Not Found: If the coordinates for the given address could not be found.
+```json
+{
+  "message": "Coordinates not found"
+}
+```
+
+---
+
+## /maps/get-distance-time Endpoint
+**Description:**
+Retrieves the distance and estimated travel time between two locations.
+
+**HTTP Method:**
+GET
+
+**Request Parameters:**
+- `origin` (string, required): The starting address or location.
+- `destination` (string, required): The destination address or location.
+
+**Example Request:**
+GET /maps/get-distance-time?origin=New+York,NY&destination=Los+Angeles,CA
+
+**Example Response:**
+```json
+{
+  "distance": {
+    "text": "2,789 miles",
+    "value": 4486540
+  },
+  "duration": {
+    "text": "1 day 18 hours",
+    "value": 154800
   }
 }
 ```
 
-## Login Captain
-`POST /captains/login`
-
-Authenticate a captain and return a JWT token.
-
-### Request Body
+**Error Response:**
+- 400 Bad Request: If the origin or destination parameter is missing or invalid.
+- 404 Not Found: If the distance and time for the given locations could not be found.
 ```json
 {
-  "email": "john@example.com",    // required, must be valid email
-  "password": "password123"       // required, minimum 6 characters
+  "message": "No routes found"
 }
 ```
 
-### Success Response (200)
+---
+
+## /maps/get-suggestions Endpoint
+**Description:**
+Retrieves autocomplete suggestions for a given input string.
+
+**HTTP Method:**
+GET
+
+**Request Parameters:**
+- `input` (string, required): The input string for which to retrieve suggestions.
+
+**Example Request:**
+GET /maps/get-suggestions?input=1600+Amphitheatre
+
+**Example Response:**
+```json
+[
+  "1600 Amphitheatre Parkway, Mountain View, CA, USA",
+  "1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA"
+]
+```
+
+**Error Response:**
+- 400 Bad Request: If the input parameter is missing or invalid.
+- 500 Internal Server Error: If there is an error retrieving suggestions.
 ```json
 {
-  "token": "jwt_token_here",      // JWT token for authentication
-  "captain": {
-    "fullname": {
-      "firstname": "John",
-      "lastname": "Doe"
-    },
-    "email": "john@example.com",
-    "vehicle": {
-      "color": "Black",
-      "plate": "ABC123",
-      "capacity": 4,
-      "vehicleType": "car"
-    },
-    "status": "inactive"
+  "message": "Unable to fetch suggestions"
+}
+```
+
+---
+
+## /rides/create Endpoint
+**Description:**
+Creates a new ride with the provided information.
+
+**HTTP Method:**
+POST
+
+**Authentication:**
+Requires a valid JWT token in the Authorization header: `Authorization: Bearer <token>`
+
+**Request Body:**
+The request body should be in JSON format and include the following fields:
+
+- `pickup` (string, required): The pickup address (minimum 3 characters).
+- `destination` (string, required): The destination address (minimum 3 characters).
+- `vehicleType` (string, required): The type of vehicle (must be 'auto', 'car', or 'moto').
+
+**Example Response:**
+```json
+{
+  "ride": {
+    "user": "user_id_here",
+    "pickup": "1600 Amphitheatre Parkway, Mountain View, CA",
+    "destination": "1 Infinite Loop, Cupertino, CA",
+    "fare": 75.0,
+    "status": "pending",
+    "duration": 154800,
+    "distance": 4486540,
+    "otp": "123456"
   }
 }
 ```
 
-## Get Captain Profile
-`GET /captains/profile`
-
-Retrieve the authenticated captain's profile information.
-
-### Headers
-| Field         | Value              | Description                    |
-|---------------|-------------------|--------------------------------|
-| Authorization | Bearer {token}    | JWT authentication token       |
-
-### Success Response (200)
+**Error Response:**
+- 400 Bad Request: If any required field is missing or invalid.
+- 500 Internal Server Error: If there is an error creating the ride.
 ```json
 {
-  "captain": {
-    "fullname": {
-      "firstname": "John",
-      "lastname": "Doe"
-    },
-    "email": "john@example.com",
-    "vehicle": {
-      "color": "Black",
-      "plate": "ABC123",
-      "capacity": 4,
-      "vehicleType": "car"
-    },
-    "status": "inactive"
-  }
+  "message": "Error message"
 }
 ```
 
-## Logout Captain
-`GET /captains/logout`
+---
 
-Log out the current captain and invalidate their token.
+## /rides/get-fare Endpoint
+**Description:**
+Retrieves the fare estimate for a ride between the provided pickup and destination addresses.
 
-### Headers
-| Field         | Value              | Description                    |
-|---------------|-------------------|--------------------------------|
-| Authorization | Bearer {token}    | JWT authentication token       |
+**HTTP Method:**
+GET
 
-### Success Response (200)
+**Authentication:**
+Requires a valid JWT token in the Authorization header: `Authorization: Bearer <token>`
+
+**Request Parameters:**
+- `pickup` (string, required): The pickup address (minimum 3 characters).
+- `destination` (string, required): The destination address (minimum 3 characters).
+
+**Example Request:**
+GET /rides/get-fare?pickup=1600+Amphitheatre+Parkway,+Mountain+View,+CA&destination=1+Infinite+Loop,+Cupertino,+CA
+
+**Example Response:**
 ```json
 {
-  "message": "Logged out successfully"
+  "auto": 50.0,
+  "car": 75.0,
+  "moto": 40.0
+}
+```
+
+**Error Response:**
+- 400 Bad Request: If any required parameter is missing or invalid.
+- 500 Internal Server Error: If there is an error calculating the fare.
+```json
+{
+  "message": "Error message"
 }
 ```
